@@ -90,12 +90,12 @@ export default function Flower({
     }
   };
 
-  const stageConfig: Record<GrowthStage, { scale: number; stemHeight: number; petalSize: number }> = {
-    sprout: { scale: 0.5, stemHeight: 20, petalSize: 0 },
-    seedling: { scale: 0.65, stemHeight: 35, petalSize: 10 },
-    budding: { scale: 0.8, stemHeight: 50, petalSize: 14 },
-    blooming: { scale: 1, stemHeight: 65, petalSize: 18 },
-    ready: { scale: 1.1, stemHeight: 80, petalSize: 20 },
+  const stageConfig: Record<GrowthStage, { scale: number; stemHeight: number; petalSize: number; stemWidth: number }> = {
+    sprout: { scale: 0.7, stemHeight: 30, petalSize: 0, stemWidth: 4 },
+    seedling: { scale: 0.85, stemHeight: 45, petalSize: 14, stemWidth: 5 },
+    budding: { scale: 1, stemHeight: 60, petalSize: 18, stemWidth: 6 },
+    blooming: { scale: 1.15, stemHeight: 75, petalSize: 22, stemWidth: 6 },
+    ready: { scale: 1.3, stemHeight: 90, petalSize: 26, stemWidth: 7 },
   };
 
   const config = stageConfig[stage];
@@ -133,7 +133,7 @@ export default function Flower({
             className="relative transition-transform duration-1000 origin-bottom"
             style={{ transform: `rotate(${droopAngle}deg)` }}
           >
-            <div style={{ width: 60, height: 60 }} className="relative">
+            <div style={{ width: 80, height: 80 }} className="relative">
               {stage !== "sprout" && (
                 <>
                   {/* Petals */}
@@ -147,7 +147,7 @@ export default function Flower({
                         backgroundColor: palette.hex,
                         left: "50%",
                         top: "50%",
-                        transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-${config.petalSize + 4}px)`,
+                        transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-${config.petalSize + 6}px)`,
                         opacity: hydration < 20 ? 0.6 : 1,
                       }}
                     />
@@ -155,8 +155,8 @@ export default function Flower({
                   <div
                     className="absolute rounded-full shadow-inner z-10"
                     style={{
-                      width: config.petalSize * 0.7,
-                      height: config.petalSize * 0.7,
+                      width: config.petalSize * 0.6,
+                      height: config.petalSize * 0.6,
                       left: "50%",
                       top: "50%",
                       transform: "translate(-50%, -50%)",
@@ -167,9 +167,9 @@ export default function Flower({
               )}
 
               {stage === "sprout" && (
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-0.5">
-                  <div className="w-4 h-8 bg-green-500 rounded-full transform -rotate-12 origin-bottom" />
-                  <div className="w-4 h-8 bg-green-500 rounded-full transform rotate-12 origin-bottom" />
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-1">
+                  <div className="w-5 h-12 bg-gradient-to-t from-green-600 to-green-400 rounded-full transform -rotate-15 origin-bottom shadow-sm" />
+                  <div className="w-5 h-12 bg-gradient-to-t from-green-600 to-green-400 rounded-full transform rotate-15 origin-bottom shadow-sm" />
                 </div>
               )}
             </div>
@@ -177,8 +177,12 @@ export default function Flower({
 
           {/* Stem */}
           <div
-            className="w-1.5 bg-gradient-to-b from-green-600 to-green-800 mx-auto rounded-full transition-all duration-1000"
-            style={{ height: config.stemHeight, opacity: hydration < 20 ? 0.7 : 1 }}
+            className="bg-gradient-to-b from-green-600 to-green-800 mx-auto rounded-full transition-all duration-1000"
+            style={{ 
+              height: config.stemHeight, 
+              width: config.stemWidth,
+              opacity: hydration < 20 ? 0.7 : 1 
+            }}
           />
 
           {/* Hydration Bar - Horizontal at bottom */}

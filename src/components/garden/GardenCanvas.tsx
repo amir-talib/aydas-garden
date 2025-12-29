@@ -106,7 +106,8 @@ export default function GardenCanvas() {
 
   return (
     <div 
-      className={`relative w-full h-screen overflow-hidden transition-all duration-1000 ${isNight ? "brightness-50" : ""}`}
+      className={`fixed inset-0 w-full h-full overflow-hidden touch-none ${isNight ? "brightness-50" : ""}`}
+      style={{ transition: "filter 1s ease" }}
       onClick={handleGardenClick}
     >
       {/* Dynamic Background */}

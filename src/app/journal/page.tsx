@@ -8,7 +8,7 @@ export default function JournalPage() {
   const { memories, loading } = useGarden();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-amber-50/30">
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-amber-50/30 allow-scroll">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-stone-200">
         <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">

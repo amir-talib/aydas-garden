@@ -43,7 +43,7 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 p-6 font-sans">
+    <div className="min-h-screen bg-stone-50 p-6 font-sans allow-scroll">
       <div className="max-w-xl mx-auto space-y-8">
         <header className="flex items-center justify-between">
           <Link href="/" className="text-sm font-bold text-stone-400 active:scale-95 transition-transform">← EXIT</Link>
