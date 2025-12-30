@@ -13,11 +13,41 @@ export default function SplashScreen({ isLoading, minDisplayTime = 1500 }: Splas
   const [progress, setProgress] = useState(0);
   const [minTimeElapsed, setMinTimeElapsed] = useState(false);
 
+  // Check last active time on mount
+  useEffect(() => {
+    const lastActive = localStorage.getItem("garden_last_active");
+    const now = Date.now();
+    const fiveMinutes = 5 * 60 * 1000;
+
+    if (lastActive && now - parseInt(lastActive) < fiveMinutes) {
+      setIsVisible(false);
+    }
+
+    // Update last active time when user leaves or closes app
+    const updateLastActive = () => {
+      localStorage.setItem("garden_last_active", Date.now().toString());
+    };
+
+    window.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") {
+        updateLastActive();
+      }
+    });
+
+    window.addEventListener("beforeunload", updateLastActive);
+
+    return () => {
+      window.removeEventListener("visibilitychange", updateLastActive);
+      window.removeEventListener("beforeunload", updateLastActive);
+    };
+  }, []);
+
   // Minimum display timer
   useEffect(() => {
+    if (!isVisible) return;
     const timer = setTimeout(() => setMinTimeElapsed(true), minDisplayTime);
     return () => clearTimeout(timer);
-  }, [minDisplayTime]);
+  }, [minDisplayTime, isVisible]);
 
   // Simulate progress
   useEffect(() => {
