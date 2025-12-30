@@ -44,11 +44,16 @@ export default function Flower({
   const progress = calculateProgress(plant);
   const palette = SEED_PALETTE[plant.color];
 
-  // Handle legacy pixel-based positions (values > 100) vs new percentage-based positions
-  // If either coordinate > 100, assume it's legacy pixel data from a ~400x800 mobile viewport
-  const isLegacyPosition = plant.position.x > 100 || plant.position.y > 100;
-  const positionX = isLegacyPosition ? (plant.position.x / 400) * 100 : plant.position.x;
-  const positionY = isLegacyPosition ? (plant.position.y / 800) * 100 : plant.position.y;
+  // Position handling for fixed canvas system (1000x700 canvas)
+  // New positions are stored as canvas coordinates (x: 0-1000, y: 0-700)
+  // Legacy positions (values 0-100) were percentages - convert them to canvas coords
+  const isPercentagePosition = plant.position.x <= 100 && plant.position.y <= 100;
+  const positionX = isPercentagePosition 
+    ? (plant.position.x / 100) * 1000  // Convert percentage to canvas coords
+    : plant.position.x;                 // Already in canvas coords
+  const positionY = isPercentagePosition 
+    ? (plant.position.y / 100) * 700   // Convert percentage to canvas coords
+    : plant.position.y;                 // Already in canvas coords
 
   // Update countdown every second and detect stage changes
   useEffect(() => {
@@ -154,8 +159,8 @@ export default function Flower({
           isUprooting ? "opacity-0 translate-y-8 scale-75" : ""
         } ${uprootMode ? "animate-pulse" : ""}`}
         style={{
-          left: `${positionX}%`,
-          top: `${positionY}%`,
+          left: positionX,
+          top: positionY,
           transform: `translate(-50%, -100%) scale(${config.scale})`,
           // z-index based on vertical position (flowers lower on screen appear in front)
           zIndex: Math.floor(positionY),

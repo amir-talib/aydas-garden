@@ -7,9 +7,11 @@ interface ButterflyProps {
   x: number;
   y: number;
   scale?: number;
+  /** When true, x/y are canvas coordinates (pixels). When false, percentages. */
+  useCanvasCoords?: boolean;
 }
 
-export default function Butterfly({ color, x, y, scale = 1 }: ButterflyProps) {
+export default function Butterfly({ color, x, y, scale = 1, useCanvasCoords = false }: ButterflyProps) {
   const [mounted, setMounted] = useState(false);
   
   // Randomize flight path and delay
@@ -30,8 +32,8 @@ export default function Butterfly({ color, x, y, scale = 1 }: ButterflyProps) {
     <div 
       className={`absolute z-20 pointer-events-none transition-all duration-[3000ms] ease-in-out ${animation}`}
       style={{ 
-        left: `${x}%`, 
-        top: `${y}%`,
+        left: useCanvasCoords ? x : `${x}%`, 
+        top: useCanvasCoords ? y : `${y}%`,
         animationDelay: `${delay}s`
       }}
     >
