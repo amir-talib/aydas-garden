@@ -18,14 +18,12 @@
 html {
   height: 100%;
   overflow: hidden;
-  position: fixed;
   width: 100%;
 }
 
 body {
   height: 100%;
   overflow: hidden;
-  position: fixed;
   width: 100%;
   background: var(--background);
   color: var(--foreground);
@@ -36,7 +34,6 @@ body {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   overscroll-behavior: none;
-  touch-action: none;
 }
 
 /* PWA Standalone Mode - Full Screen */
@@ -59,15 +56,21 @@ body {
 }
 
 /* Allow scrolling on specific pages */
-html.allow-scroll,
+html.allow-scroll {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  position: static !important;
+  height: auto !important;
+}
+
 body.allow-scroll {
   overflow-y: auto !important;
   overflow-x: hidden !important;
   position: static !important;
   height: auto !important;
-  min-height: 100% !important;
+  min-height: 100vh !important;
   width: 100% !important;
-  touch-action: pan-y !important;
+  touch-action: auto !important;
   -webkit-overflow-scrolling: touch !important;
   overscroll-behavior-y: auto !important;
 }
