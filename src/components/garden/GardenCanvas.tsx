@@ -8,6 +8,7 @@ import Flower from "./Flower";
 import HarvestModal from "./HarvestModal";
 import ControlBar from "./ControlBar";
 import Butterfly from "./Butterfly";
+import SplashScreen from "./SplashScreen";
 
 type Season = "spring" | "summer" | "fall" | "winter";
 
@@ -17,6 +18,7 @@ export default function GardenCanvas() {
     plants,
     memories,
     settings,
+    loading,
     plantSeed,
     waterPlant,
     uprootPlant,
@@ -26,6 +28,7 @@ export default function GardenCanvas() {
   const [selectedSeed, setSelectedSeed] = useState<Seed | null>(null);
   const [harvestedMemory, setHarvestedMemory] = useState<Memory | null>(null);
   const [isPlanting, setIsPlanting] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   
   const [wateringMode, setWateringMode] = useState(false);
   const [uprootMode, setUprootMode] = useState(false);
@@ -105,11 +108,15 @@ export default function GardenCanvas() {
   const config = seasonConfig[season];
 
   return (
-    <div 
-      className={`fixed inset-0 w-full h-full overflow-hidden touch-none ${isNight ? "brightness-50" : ""}`}
-      style={{ transition: "filter 1s ease" }}
-      onClick={handleGardenClick}
-    >
+    <>
+      {/* Splash Screen */}
+      <SplashScreen isLoading={loading} minDisplayTime={1800} />
+      
+      <div 
+        className={`fixed inset-0 w-full h-full overflow-hidden touch-none ${isNight ? "brightness-50" : ""}`}
+        style={{ transition: "filter 1s ease" }}
+        onClick={handleGardenClick}
+      >
       {/* Dynamic Background */}
       <div className={`absolute inset-0 h-[35%] bg-gradient-to-b ${config.sky} transition-colors duration-1000`} />
       <div className={`absolute bottom-0 w-full h-[65%] bg-gradient-to-b ${config.ground} transition-colors duration-1000`} />
@@ -173,5 +180,6 @@ export default function GardenCanvas() {
       {/* Audio */}
       <audio id="bg-music" loop src="/wii-theme.mp3" />
     </div>
+    </>
   );
 }
