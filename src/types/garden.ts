@@ -45,6 +45,13 @@ export interface Memory {
   position: { x: number; y: number };
 }
 
+export interface Comment {
+  id: string;
+  memoryId: string;
+  text: string;
+  createdAt: Timestamp;
+}
+
 export const SEED_PALETTE = {
   sunset: { hex: "#e8a87c", name: "Sunset Rose", meaning: "Warmth & comfort" },
   blush: { hex: "#f4a4b8", name: "Blush Peony", meaning: "Tender affection" },

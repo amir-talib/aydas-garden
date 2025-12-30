@@ -4,9 +4,10 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { useGarden } from "@/hooks/useGarden";
 import { SEED_PALETTE, formatDuration } from "@/types/garden";
+import CommentSection from "@/components/journal/CommentSection";
 
 export default function JournalPage() {
-  const { memories, loading } = useGarden();
+  const { memories, loading, fetchComments, addComment, deleteComment } = useGarden();
 
   // Enable scrolling on this page
   useEffect(() => {
@@ -100,6 +101,15 @@ export default function JournalPage() {
                         </span>
                       </div>
                     </div>
+
+                    {/* Comments Section */}
+                    <CommentSection
+                      memoryId={memory.id}
+                      color={memory.color}
+                      fetchComments={fetchComments}
+                      addComment={addComment}
+                      deleteComment={deleteComment}
+                    />
                   </div>
                 </article>
               );

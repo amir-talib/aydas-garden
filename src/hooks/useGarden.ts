@@ -12,9 +12,10 @@ import {
   Timestamp,
   orderBy,
   setDoc,
+  getDocs,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import type { Seed, Plant, Memory, GardenSettings } from "@/types/garden";
+import type { Seed, Plant, Memory, GardenSettings, Comment } from "@/types/garden";
 
 export function useGarden() {
   const [seeds, setSeeds] = useState<Seed[]>([]);
@@ -106,6 +107,45 @@ export function useGarden() {
     return memoryData;
   }, []);
 
+  /**
+   * Fetch comments for a specific memory
+   */
+  const fetchComments = useCallback(async (memoryId: string): Promise<Comment[]> => {
+    const commentsRef = collection(db, "memories", memoryId, "comments");
+    const q = query(commentsRef, orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(d => ({
+      id: d.id,
+      memoryId,
+      ...d.data(),
+    })) as Comment[];
+  }, []);
+
+  /**
+   * Add a comment to a memory
+   */
+  const addComment = useCallback(async (memoryId: string, text: string): Promise<Comment> => {
+    const commentsRef = collection(db, "memories", memoryId, "comments");
+    const commentData = {
+      text: text.trim(),
+      createdAt: Timestamp.now(),
+    };
+    const docRef = await addDoc(commentsRef, commentData);
+    return {
+      id: docRef.id,
+      memoryId,
+      text: text.trim(),
+      createdAt: commentData.createdAt,
+    };
+  }, []);
+
+  /**
+   * Delete a comment from a memory
+   */
+  const deleteComment = useCallback(async (memoryId: string, commentId: string) => {
+    await deleteDoc(doc(db, "memories", memoryId, "comments", commentId));
+  }, []);
+
   return {
     seeds,
     plants,
@@ -117,5 +157,8 @@ export function useGarden() {
     updateWeather,
     uprootPlant,
     harvestPlant,
+    fetchComments,
+    addComment,
+    deleteComment,
   };
 }
