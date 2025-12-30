@@ -28,7 +28,6 @@ export default function GardenCanvas() {
   const [selectedSeed, setSelectedSeed] = useState<Seed | null>(null);
   const [harvestedMemory, setHarvestedMemory] = useState<Memory | null>(null);
   const [isPlanting, setIsPlanting] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
   
   const [wateringMode, setWateringMode] = useState(false);
   const [uprootMode, setUprootMode] = useState(false);
