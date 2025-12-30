@@ -44,16 +44,26 @@ export default function Flower({
   const progress = calculateProgress(plant);
   const palette = SEED_PALETTE[plant.color];
 
-  // Position handling for fixed canvas system (1000x700 canvas)
-  // New positions are stored as canvas coordinates (x: 0-1000, y: 0-700)
-  // Legacy positions (values 0-100) were percentages - convert them to canvas coords
-  const isPercentagePosition = plant.position.x <= 100 && plant.position.y <= 100;
-  const positionX = isPercentagePosition 
-    ? (plant.position.x / 100) * 1000  // Convert percentage to canvas coords
-    : plant.position.x;                 // Already in canvas coords
-  const positionY = isPercentagePosition 
-    ? (plant.position.y / 100) * 700   // Convert percentage to canvas coords
-    : plant.position.y;                 // Already in canvas coords
+  // Position handling for fixed canvas system (500x900 canvas)
+  // We handle three eras of positioning:
+  // 1. Percentage (0-100)
+  // 2. Original Fixed Canvas (1000x700)
+  // 3. New Portrait Fixed Canvas (500x900)
+  
+  let positionX = plant.position.x;
+  let positionY = plant.position.y;
+
+  const isPercentage = plant.position.x <= 100 && plant.position.y <= 100;
+  const isOldCanvas = !isPercentage && (plant.position.x > 500 || plant.position.y < 350); // Old canvas was 1000x700
+
+  if (isPercentage) {
+    positionX = (plant.position.x / 100) * 500;
+    positionY = (plant.position.y / 100) * 900;
+  } else if (isOldCanvas) {
+    // Convert from 1000x700 to 500x900
+    positionX = (plant.position.x / 1000) * 500;
+    positionY = (plant.position.y / 700) * 900;
+  }
 
   // Update countdown every second and detect stage changes
   useEffect(() => {
@@ -133,24 +143,31 @@ export default function Flower({
   };
 
   const stageConfig: Record<GrowthStage, { scale: number; stemHeight: number; petalSize: number; stemWidth: number }> = {
-    sprout: { scale: 0.7, stemHeight: 30, petalSize: 0, stemWidth: 4 },
-    seedling: { scale: 0.85, stemHeight: 45, petalSize: 14, stemWidth: 5 },
-    budding: { scale: 1, stemHeight: 60, petalSize: 18, stemWidth: 6 },
-    blooming: { scale: 1.15, stemHeight: 75, petalSize: 22, stemWidth: 6 },
-    ready: { scale: 1.3, stemHeight: 90, petalSize: 26, stemWidth: 7 },
+    sprout: { scale: 0.6, stemHeight: 25, petalSize: 0, stemWidth: 3 },
+    seedling: { scale: 0.75, stemHeight: 40, petalSize: 12, stemWidth: 4 },
+    budding: { scale: 0.9, stemHeight: 55, petalSize: 16, stemWidth: 5 },
+    blooming: { scale: 1.05, stemHeight: 70, petalSize: 20, stemWidth: 5 },
+    ready: { scale: 1.2, stemHeight: 85, petalSize: 24, stemWidth: 6 },
   };
 
   const config = stageConfig[stage];
   const isReady = stage === "ready";
+  const [sparkleList, setSparkleList] = useState<{ id: number; angle: number; distance: number; delay: number; size: number }[]>([]);
 
-  // Generate sparkle positions for the bloom effect
-  const sparkles = Array.from({ length: 8 }).map((_, i) => ({
-    id: i,
-    angle: (i * 45) + Math.random() * 20,
-    distance: 40 + Math.random() * 30,
-    delay: i * 0.1,
-    size: 4 + Math.random() * 4,
-  }));
+  // Generate sparkle positions only on client to avoid hydration mismatch
+  useEffect(() => {
+    if (showSparkles || isReady) {
+      setSparkleList(
+        Array.from({ length: 8 }).map((_, i) => ({
+          id: i,
+          angle: (i * 45) + Math.random() * 20,
+          distance: 40 + Math.random() * 30,
+          delay: i * 0.1,
+          size: 4 + Math.random() * 4,
+        }))
+      );
+    }
+  }, [showSparkles, isReady]);
 
   return (
     <>
@@ -186,7 +203,7 @@ export default function Flower({
         {/* Sparkles for bloom animation */}
         {(showSparkles || isReady) && (
           <div className="absolute inset-0 pointer-events-none">
-            {sparkles.map((sparkle) => (
+            {sparkleList.map((sparkle) => (
               <div
                 key={sparkle.id}
                 className="absolute left-1/2 top-1/2"

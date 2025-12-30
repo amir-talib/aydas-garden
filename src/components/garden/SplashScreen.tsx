@@ -12,6 +12,21 @@ export default function SplashScreen({ isLoading, minDisplayTime = 1500 }: Splas
   const [isExiting, setIsExiting] = useState(false);
   const [progress, setProgress] = useState(0);
   const [minTimeElapsed, setMinTimeElapsed] = useState(false);
+  const [particles, setParticles] = useState<{ width: number; height: number; left: number; top: number; background: string; animationDuration: number; animationDelay: number }[]>([]);
+
+  // Initialize particles on mount to avoid hydration mismatch
+  useEffect(() => {
+    const newParticles = Array.from({ length: 15 }).map((_, i) => ({
+      width: 6 + Math.random() * 14,
+      height: 6 + Math.random() * 14,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      background: ["#f9a8d4", "#fcd34d", "#86efac", "#a5b4fc", "#fca5a5"][i % 5],
+      animationDuration: 5 + Math.random() * 5,
+      animationDelay: Math.random() * 3,
+    }));
+    setParticles(newParticles);
+  }, []);
 
   // Check last active time on mount
   useEffect(() => {
@@ -83,19 +98,19 @@ export default function SplashScreen({ isLoading, minDisplayTime = 1500 }: Splas
     >
       {/* Soft floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 15 }).map((_, i) => (
+        {particles.map((p, i) => (
           <div
             key={i}
             className="absolute rounded-full"
             style={{
-              width: 6 + Math.random() * 14,
-              height: 6 + Math.random() * 14,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              background: ["#f9a8d4", "#fcd34d", "#86efac", "#a5b4fc", "#fca5a5"][i % 5],
+              width: p.width,
+              height: p.height,
+              left: `${p.left}%`,
+              top: `${p.top}%`,
+              background: p.background,
               opacity: 0.3,
-              animation: `splash-float ${5 + Math.random() * 5}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 3}s`,
+              animation: `splash-float ${p.animationDuration}s ease-in-out infinite`,
+              animationDelay: `${p.animationDelay}s`,
             }}
           />
         ))}

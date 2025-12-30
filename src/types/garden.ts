@@ -9,12 +9,16 @@ import { Timestamp } from "firebase/firestore";
  * garden is scaled uniformly to fit the viewport.
  */
 export const GARDEN_CANVAS = {
-  /** Fixed width of the garden canvas in logical pixels */
-  WIDTH: 1000,
-  /** Fixed height of the garden canvas in logical pixels */
-  HEIGHT: 700,
+  /** Fixed width of the garden canvas (Portrait-first for mobile) */
+  WIDTH: 500,
+  /** Fixed height of the garden canvas */
+  HEIGHT: 900,
   /** Minimum Y position (top boundary - sky area) as percentage */
   MIN_Y_PERCENT: 0.35,
+  /** Maximum Y position (bottom boundary - leave room for UI labels) */
+  MAX_Y_PERCENT: 0.88,
+  /** Horizontal safe padding percentage */
+  SAFE_X_PERCENT: 0.12,
 } as const;
 
 /**

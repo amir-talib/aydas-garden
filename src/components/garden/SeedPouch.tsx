@@ -21,7 +21,7 @@ export default function SeedPouch({
     return (
       <div 
         className="fixed left-1/2 -translate-x-1/2 z-40 pointer-events-none opacity-60"
-        style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 72px)" }}
+        style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 96px)" }}
       >
         <div className="bg-white/70 backdrop-blur-md rounded-full shadow-sm px-4 py-2 border border-white/30">
           <p className="text-stone-500 text-xs font-medium tracking-wide">

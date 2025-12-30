@@ -77,6 +77,19 @@ export default function GardenCanvas() {
   const [uprootMode, setUprootMode] = useState(false);
   const [season, setSeason] = useState<Season>("summer");
   const [isNight, setIsNight] = useState(false);
+  const [rainDrops, setRainDrops] = useState<{ left: string; delay: string }[]>([]);
+
+  // Initialize rain drops only on client to avoid hydration mismatch
+  useEffect(() => {
+    if (settings.weather === "rainy") {
+      setRainDrops(
+        Array.from({ length: 40 }).map(() => ({
+          left: `${Math.random() * 100}%`,
+          delay: `${Math.random() * 2}s`,
+        }))
+      );
+    }
+  }, [settings.weather]);
 
   // Background butterfly positions (stored as canvas coordinates)
   const [butterflies, setButterflies] = useState<{id: number, x: number, y: number, color: string, scale: number}[]>([]);
@@ -92,11 +105,11 @@ export default function GardenCanvas() {
         if (prev.length < targetCount) {
           const newButterflies = [...prev];
           while (newButterflies.length < targetCount) {
-            // Butterflies in canvas coordinates
+            // Butterflies in canvas coordinates (Portrait-first: 500x900)
             newButterflies.push({
               id: Date.now() + Math.random(),
-              x: 50 + (Math.random() * 900), // 50-950 in canvas coords
-              y: 100 + (Math.random() * 200), // 100-300 in canvas coords (sky area)
+              x: 50 + (Math.random() * 400), // 50-450 in canvas coords
+              y: 100 + (Math.random() * 250), // 100-350 in canvas coords (sky area)
               color: ["#f472b6", "#60a5fa", "#facc15", "#a78bfa", "#fb7185", "#2dd4bf"][Math.floor(Math.random() * 6)],
               scale: 0.6 + Math.random() * 0.4
             });
@@ -135,19 +148,19 @@ export default function GardenCanvas() {
       // Convert to canvas coordinates:
       // 1. Subtract the offset (where the scaled canvas starts)
       // 2. Divide by scale to get canvas coordinates
-      const canvasX = (viewportX - offsetX) / scale;
-      const canvasY = (viewportY - offsetY) / scale;
+      let canvasX = (viewportX - offsetX) / scale;
+      let canvasY = (viewportY - offsetY) / scale;
       
-      // Bounds check - ensure click is within canvas
-      if (canvasX < 0 || canvasX > GARDEN_CANVAS.WIDTH || 
-          canvasY < 0 || canvasY > GARDEN_CANVAS.HEIGHT) {
-        return;
-      }
-      
-      // Don't allow planting in the sky area (top 35%)
-      if (canvasY < GARDEN_CANVAS.HEIGHT * GARDEN_CANVAS.MIN_Y_PERCENT) {
-        return;
-      }
+      // Enforce Safe Zones for planting
+      // Horizontal padding
+      const minX = GARDEN_CANVAS.WIDTH * GARDEN_CANVAS.SAFE_X_PERCENT;
+      const maxX = GARDEN_CANVAS.WIDTH * (1 - GARDEN_CANVAS.SAFE_X_PERCENT);
+      canvasX = Math.max(minX, Math.min(maxX, canvasX));
+
+      // Vertical padding (Sky boundary and Bottom UI boundary)
+      const minY = GARDEN_CANVAS.HEIGHT * GARDEN_CANVAS.MIN_Y_PERCENT;
+      const maxY = GARDEN_CANVAS.HEIGHT * GARDEN_CANVAS.MAX_Y_PERCENT;
+      canvasY = Math.max(minY, Math.min(maxY, canvasY));
 
       setIsPlanting(true);
       try {
@@ -208,13 +221,13 @@ export default function GardenCanvas() {
           {/* Weather Overlay from Admin Settings */}
           {settings.weather === "rainy" && (
             <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
-              {Array.from({ length: 40 }).map((_, i) => (
+              {rainDrops.map((drop, i) => (
                 <div 
                   key={i} 
                   className="absolute w-px h-6 bg-blue-200/40 animate-rain" 
                   style={{ 
-                    left: `${Math.random() * 100}%`, 
-                    animationDelay: `${Math.random() * 2}s` 
+                    left: drop.left, 
+                    animationDelay: drop.delay 
                   }} 
                 />
               ))}
