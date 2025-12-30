@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useGarden } from "@/hooks/useGarden";
@@ -17,6 +17,17 @@ export default function AdminPage() {
   const [minutes, setMinutes] = useState(0);
   const [selectedColor, setSelectedColor] = useState<SeedColor>("sunset");
   const [success, setSuccess] = useState(false);
+
+  // Enable scrolling on this page
+  useEffect(() => {
+    document.documentElement.classList.add("allow-scroll");
+    document.body.classList.add("allow-scroll");
+    
+    return () => {
+      document.documentElement.classList.remove("allow-scroll");
+      document.body.classList.remove("allow-scroll");
+    };
+  }, []);
 
   // Calculate total duration in minutes
   const totalMinutes = days * 24 * 60 + hours * 60 + minutes;
@@ -43,7 +54,7 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 p-6 font-sans allow-scroll">
+    <div className="min-h-screen bg-stone-50 p-6 pb-20 font-sans">
       <div className="max-w-xl mx-auto space-y-8">
         <header className="flex items-center justify-between">
           <Link href="/" className="text-sm font-bold text-stone-400 active:scale-95 transition-transform">← EXIT</Link>

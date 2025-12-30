@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { useGarden } from "@/hooks/useGarden";
 import { SEED_PALETTE, formatDuration } from "@/types/garden";
@@ -7,8 +8,19 @@ import { SEED_PALETTE, formatDuration } from "@/types/garden";
 export default function JournalPage() {
   const { memories, loading } = useGarden();
 
+  // Enable scrolling on this page
+  useEffect(() => {
+    document.documentElement.classList.add("allow-scroll");
+    document.body.classList.add("allow-scroll");
+    
+    return () => {
+      document.documentElement.classList.remove("allow-scroll");
+      document.body.classList.remove("allow-scroll");
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-amber-50/30 allow-scroll">
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-amber-50/30">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-stone-200">
         <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -26,7 +38,7 @@ export default function JournalPage() {
       </header>
 
       {/* Content */}
-      <main className="max-w-2xl mx-auto px-6 py-8">
+      <main className="max-w-2xl mx-auto px-6 py-8 pb-20">
         {loading ? (
           <div className="text-center py-20">
             <div className="animate-spin w-8 h-8 border-2 border-amber-400 border-t-transparent rounded-full mx-auto" />
