@@ -31,12 +31,12 @@ export default function JournalPage() {
           >
             ← Back to Garden
           </Link>
-          <h1 className="font-serif text-xl font-semibold text-stone-800">
-            Journal
-          </h1>
-          <div className="w-20" /> {/* Spacer for centering */}
         </div>
       </header>
+
+      <h1 className="max-w-2xl mx-auto px-[28px] mt-8 font-serif text-[25px] font-semibold text-stone-800 text-left">
+        Journal
+      </h1>
 
       {/* Content */}
       <main className="max-w-2xl mx-auto px-6 py-8 pb-20">

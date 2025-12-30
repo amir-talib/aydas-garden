@@ -81,14 +81,17 @@ export default function GardenCanvas() {
     async (e: React.MouseEvent<HTMLDivElement>) => {
       if (!selectedSeed || isPlanting) return;
       const rect = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      
+      // Convert pixel position to percentage (0-100) for consistent positioning across devices
+      const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+      const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
 
-      if (y < rect.height * 0.35) return;
+      // Don't allow planting in the sky (top 35%)
+      if (yPercent < 35) return;
 
       setIsPlanting(true);
       try {
-        await plantSeed(selectedSeed, { x, y });
+        await plantSeed(selectedSeed, { x: xPercent, y: yPercent });
         setSelectedSeed(null);
       } finally {
         setIsPlanting(false);

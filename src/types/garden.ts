@@ -2,6 +2,23 @@ import { Timestamp } from "firebase/firestore";
 
 /**
  * ============================================
+ * GARDEN CANVAS CONFIGURATION
+ * ============================================
+ * Fixed canvas size for consistent flower positioning across all devices.
+ * All flower positions are stored in these "canvas units" and the entire
+ * garden is scaled uniformly to fit the viewport.
+ */
+export const GARDEN_CANVAS = {
+  /** Fixed width of the garden canvas in logical pixels */
+  WIDTH: 1000,
+  /** Fixed height of the garden canvas in logical pixels */
+  HEIGHT: 700,
+  /** Minimum Y position (top boundary - sky area) as percentage */
+  MIN_Y_PERCENT: 0.35,
+} as const;
+
+/**
+ * ============================================
  * LIFECYCLE STAGES
  * ============================================
  */

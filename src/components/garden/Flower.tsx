@@ -44,6 +44,12 @@ export default function Flower({
   const progress = calculateProgress(plant);
   const palette = SEED_PALETTE[plant.color];
 
+  // Handle legacy pixel-based positions (values > 100) vs new percentage-based positions
+  // If either coordinate > 100, assume it's legacy pixel data from a ~400x800 mobile viewport
+  const isLegacyPosition = plant.position.x > 100 || plant.position.y > 100;
+  const positionX = isLegacyPosition ? (plant.position.x / 400) * 100 : plant.position.x;
+  const positionY = isLegacyPosition ? (plant.position.y / 800) * 100 : plant.position.y;
+
   // Update countdown every second and detect stage changes
   useEffect(() => {
     const interval = setInterval(() => {
@@ -148,10 +154,11 @@ export default function Flower({
           isUprooting ? "opacity-0 translate-y-8 scale-75" : ""
         } ${uprootMode ? "animate-pulse" : ""}`}
         style={{
-          left: plant.position.x,
-          top: plant.position.y,
+          left: `${positionX}%`,
+          top: `${positionY}%`,
           transform: `translate(-50%, -100%) scale(${config.scale})`,
-          zIndex: Math.floor(plant.position.y),
+          // z-index based on vertical position (flowers lower on screen appear in front)
+          zIndex: Math.floor(positionY),
         }}
         onClick={handleClick}
       >
